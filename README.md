@@ -1,6 +1,6 @@
 # Codeblue Server
 
-EC2 Node server code for running detection algorithm Python scripts
+Node server code for running detection algorithm Python scripts on EC2 server
 
 ### Running the server
 ```bash
