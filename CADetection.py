@@ -42,10 +42,12 @@ DETAILS
 
 """ IMPORTS """
 import numpy as np
-import codecs, json
-from json import JSONEncoder
+import json
 import sys
+import codecs
 from Heart import Heart
+
+# print("First name: " + sys.argv[1])
 
 """ CORE FUNCTION DEFINTION """
 def isMaxima(signalVals):
@@ -77,25 +79,26 @@ sensorData2 = np.delete(sensorData2, (0), axis=0)
 
 
 # test with json
-class NumpyArrayEncoder(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return JSONEncoder.default(self, obj)
+# class NumpyArrayEncoder():
+#     def default(self, obj):
+#         if isinstance(obj, np.ndarray):
+#             return obj.tolist()
+#         return json.JSONEncoder.default(self, obj)
 
-# Serialization
-numpyData = {"array": sensorData}
-encodedNumpyData = json.dumps(numpyData, cls=NumpyArrayEncoder)  # use dump() to write array into file
+# # Serialization
+# numpyData = {"array": sensorData}
+# encodedNumpyData = json.dumps(numpyData, cls=NumpyArrayEncoder)  # use dump() to write array into file
 # print("Printing JSON serialized NumPy array")
 # print(encodedNumpyData)
 
 # Deserialization
 # obj_text = codecs.open("sensor_data.json", 'r', encoding='utf-8').read()
 obj_text = sys.argv[1]
+
 b_new = json.loads(obj_text)
 jsonData = np.array(b_new)
 
-# print(jsonData)
+print(jsonData)
 
 """
 Test NUFFT
