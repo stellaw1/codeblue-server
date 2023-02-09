@@ -44,10 +44,7 @@ DETAILS
 import numpy as np
 import codecs, json
 from json import JSONEncoder
-
-jsn = '[[1,2],[3,4]]'
-a = np.array(json.loads(jsn))
-
+import sys
 from Heart import Heart
 
 """ CORE FUNCTION DEFINTION """
@@ -93,9 +90,12 @@ encodedNumpyData = json.dumps(numpyData, cls=NumpyArrayEncoder)  # use dump() to
 # print(encodedNumpyData)
 
 # Deserialization
-obj_text = codecs.open("sensor_data.json", 'r', encoding='utf-8').read()
+# obj_text = codecs.open("sensor_data.json", 'r', encoding='utf-8').read()
+obj_text = sys.argv[1]
 b_new = json.loads(obj_text)
 jsonData = np.array(b_new)
+
+# print(jsonData)
 
 """
 Test NUFFT

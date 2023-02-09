@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
     console.log(req.body);
     
     // spawn new child process to call the python script
-    const python = spawn('python3', ['CADetection.py']);
+    const python = spawn('python3', ['CADetection.py'], req.body);
 
     // collect data from script
     python.stdout.on('data', function (data) {
