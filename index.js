@@ -8,9 +8,10 @@ app.get('/', (req, res) => {
     var largeDataSet = [];
 
     console.log(req.body);
+    console.log(typeof req.body);
     
     // spawn new child process to call the python script
-    const python = spawn('python3', ['CADetection.py'], req.body);
+    const python = spawn('python3', ['CADetection.py'], JSON.stringify(req.body));
 
     // collect data from script
     python.stdout.on('data', function (data) {
