@@ -103,10 +103,10 @@ class Heart:
         plt.plot(peakMeans, 'g', peakLowerBounds, 'r', peakUpperBounds, 'r', peakValues, 'k', troughMeans, 'm', troughLowerBounds, 'c', troughUpperBounds, 'c', troughValues, 'b')
         plt.show()
 
-    def low_pass_filter(self, data, cutoff, fs, order=5):
+    def filter(self, data, cutoff, fs, filterType, order=5):
         nyquist = 0.5 * fs
         cutoff = cutoff / nyquist
-        b, a = signal.butter(order, cutoff, 'lowpass')
+        b, a = signal.butter(order, cutoff, filterType)
         filtered_signal = signal.filtfilt(b, a, data)
         return filtered_signal
 
@@ -119,9 +119,11 @@ class Heart:
     def FFT(self, data):
         # Low-pass filtering
         fs = 50  # Sample rate (Hz)
-        cutoff = 3  # Cutoff frequency (Hz)
+        lowpass_cutoff = 3  # Cutoff frequency (Hz)
+        highpass_cutoff = 3  # Cutoff frequency (Hz)
         order = 5  # Filter order
-        data = self.low_pass_filter(data, cutoff, fs, order)
+        data = self.filter(data, lowpass_cutoff, fs, 'lowpass', order)
+        data = self.filter(data, highpass_cutoff, fs, 'highpass', order)
         # Normalizing the data
         data = data - np.mean(data)
         t = np.arange(0, 10.24, 0.02)
@@ -146,7 +148,7 @@ class Heart:
 
         # At the end of the above loop, highestFreq will contain the strongest freq from the fourier transform
         print(highestFreq)
-        print(str(60.0/highestFreq) + " BPM")
+        print(str(60.0 * highestFreq) + " BPM")
         # Plotting
         # plt.figure(figsize = (12, 6))
         # plt.subplot(121)

@@ -92,22 +92,20 @@ sensorData2 = np.delete(sensorData2, (0), axis=0)
 # print(encodedNumpyData)
 
 # Deserialization
-# obj_text = codecs.open("sensor_data.json", 'r', encoding='utf-8').read()
-obj_text = sys.argv[1]
+obj_text = codecs.open("ecg1.json", 'r', encoding='utf-8').read()
+# obj_text = sys.argv[1]
 
 b_new = json.loads(obj_text)
 jsonData = np.array(b_new)
-
-print(jsonData)
 
 """
 Test NUFFT
 """
 heart = Heart(name, minHeartRate, maxHeartRate)
 
-for i in range(len(jsonData) // 512):
-    heart.FFT(jsonData[i * 512 : (i + 1) * 512, 1])
-    #heart.NUFFT(sensorData[i*512:(i+1)*512, 1])
+# for i in range(len(jsonData) // 512):
+heart.FFT(jsonData)
+#heart.NUFFT(sensorData[i*512:(i+1)*512, 1])
 
 """ SENSOR SIMULATION """
 for i in range(windowSize, len(sensorData)-(windowSize-1)):
