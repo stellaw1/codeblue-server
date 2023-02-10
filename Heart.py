@@ -1,18 +1,60 @@
-## This class serves as a representation of a heart
-# It will be passed points, where it will do signal processing
-# It's first major use is to help determine if the signal being received is representative of cardiac data
-# It will do this by ensuring that the data received is within proper ranges
+"""
+This class serves as a representation of a heart
+It will be passed points, where it will do signal processing
+It's first major use is to help determine if the signal being received is representative of cardiac data
+It will do this by ensuring that the data received is within proper ranges
+"""
+
+"""
+DETAILS
+
+    - Signal
+        - Is sending data every 0.02s, or 50HZ
+        - For a regular heart beat signal, one can expect that there is between 1 and 3 peaks/second
+            - Any more, or any less could/should signal that the user is either
+                - Not in a healthy range
+                - Not wearing their sensor properly
+            - Based on healthy cardiac signals from test data (1Hz, 60BPM)
+                - @ T = 0.00s -> Peak
+                - @ T = 0.15s -> Trough
+                - @ T = 1.00s -> Peak
+            - Based on healthy cardiac signals from test data (2Hz, 120BPM)
+                - @ T = 0.00s -> Peak
+                - @ T = 0.08s -> Trough
+                - @ T = 0.50s -> Peak
+            - Based on healthy cardiac signals from test data (3Hz, 180BPM)
+                - @ T = 0.00s -> Peak
+                - @ T = 0.08s -> Trough
+                - @ T = 0.33s -> Peak
+
+    - Algorithm
+        - The algorithm will listen for the first two data points before starting to analyze for detection
+            - Based on the test data, this will account for 0.06s of "unanalyzed" data
+        - The algorithm will monitor signals in two fashions
+            - Peak detection & monitoring
+                - Peak height
+                    - In relation to the average signal height
+                    - In relation to the average trough depth
+                - Peak-to-peak distance
+                    - In relation to previous peaks
+                - Absolute peak height
+                    - In relation to a signal value of 0
+            - Fourier transform
+                - Discrete, non-uniform
+                - Used to ensure that the signal frequencey is within a health range
+                    - Between 1 & 3 Hz (60-180 BPM)
+            - Based on othe nature of the signal, the smallest window that we can use is 3 data points to determine a peak (0.06s)
+                - Since the distance between a peak and a trough can be 0.08s
+"""
 
 from pynufft import NUFFT
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import statistics
-import scipy.fftpack
+import statisticss
 import scipy.signal as signal
 
 class Heart:
-
     def __init__(self, name, minHeartRate, maxHeartRate):
         self.name = name
         self.minHeartRate = minHeartRate
@@ -32,18 +74,15 @@ class Heart:
         self.peakHealthy = []
         self.troughHealthy = []
 
-        #self.fiveSecondMarks = []
-
     """
     CHECK FUNCTIONS
-    """
-    # Will be used to check for both peaks and troughs to ensure that they are both in proper ranges
-    # Need to ensure that there is a 'tight' baseline
-    # Need to ensure that new values that are added are within a healthy range of that baseline
-    # Need to include metrics like
-    def maximaAnalysis(self, type):
-        # print("---------------------------------------")
 
+    Will be used to check for both peaks and troughs to ensure that they are both in proper ranges
+    Need to ensure that there is a 'tight' baseline
+    Need to ensure that new values that are added are within a healthy range of that baseline
+    Need to include metrics like
+    """
+    def maximaAnalysis(self, type):
         # Calculating and updating metrics
         if type == "peak":
             # Collecting baseline points
@@ -68,8 +107,9 @@ class Heart:
 
     """
     SIMPLE ADDER FUNCTIONS
+    
+    Adds the maximum to its respective variable
     """
-    # Adds the maximum to its respective variable
     def addMaxima(self, data, type):
         match type:
             case "peak":
@@ -82,10 +122,6 @@ class Heart:
                 return self.maximaAnalysis("trough")
             case _:
                 return "Invalid value type"
-
-
-    #def addFiveSecondMark(self, data):
-    #    self.fiveSecondMarks.append(data)
 
     def plotMaxima(self):
         peakMeans = np.array(self.peakMeans)
@@ -112,8 +148,9 @@ class Heart:
 
     """
     UNIFORM FOURIER TRANSFORM
+
     To be used on 10 second intervals to simulate incoming data
-    " to appennd to the freqAverages for benchmarking
+    to appennd to the freqAverages for benchmarking
     """
 
     def FFT(self, data):
@@ -149,7 +186,9 @@ class Heart:
         # At the end of the above loop, highestFreq will contain the strongest freq from the fourier transform
         print(highestFreq)
         print(str(60.0 * highestFreq) + " BPM")
+
         # Plotting
+
         # plt.figure(figsize = (12, 6))
         # plt.subplot(121)
 
@@ -168,42 +207,38 @@ class Heart:
 
     """
     NON-UNIFORM DISCRETE FOURIER TRANSFORM
+
     To be used on 5 second intervals to simulate incoming data
-    " to append to the freqAverages for benchmarking
+    to append to the freqAverages for benchmarking
     """
+    def NUFFT(self, data):
+        data = data - np.mean(data)
+        
+        nufftObj = NUFFT()
+        om = np.random.randn(1512,1)
+        Nd = (512,)
+        Kd = (1024,)
+        Jd = (12,)
+        nufftObj.plan(om, Nd, Kd, Jd)
 
-    # def NUFFT(self, data):
-    #     data = data - np.mean(data)
-    #     """
-    #     Lin, Jyh-Miin.
-    #     “Python Non-Uniform Fast Fourier Transform (PyNUFFT): An Accelerated Non-Cartesian MRI Package on a Heterogeneous Platform (CPU/GPU).”
-    #     Journal of Imaging 4.3 (2018): 51.
-    #     """
-    #     nufftObj = NUFFT()
-    #     om = np.random.randn(1512,1)
-    #     Nd = (512,)
-    #     Kd = (1024,)
-    #     Jd = (12,)
-    #     nufftObj.plan(om, Nd, Kd, Jd)
+        plt.show()
 
-    #     plt.show()
+        nufft_freq_data =nufftObj.forward(data)
 
-    #     nufft_freq_data =nufftObj.forward(data)
+        plt.figure(figsize = (12, 6))
+        plt.subplot(121)
+        plt.plot(om,np.absolute(nufft_freq_data), ".", label='abs')
+        plt.xlabel('Freq (Hz)')
+        plt.ylabel('NUFFT Amplitude |X(freq)|')
+        plt.xlim(0.5, 5)
 
-    #     plt.figure(figsize = (12, 6))
-    #     plt.subplot(121)
-    #     plt.plot(om,np.absolute(nufft_freq_data), ".", label='abs')
-    #     plt.xlabel('Freq (Hz)')
-    #     plt.ylabel('NUFFT Amplitude |X(freq)|')
-    #     plt.xlim(0.5, 5)
+        plt.subplot(122)
+        plt.plot(data,'r',label='original signal')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Amplitude')
+        plt.tight_layout()
+        plt.show()
 
-    #     plt.subplot(122)
-    #     plt.plot(data,'r',label='original signal')
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel('Amplitude')
-    #     plt.tight_layout()
-    #     plt.show()
+        plt.show()
 
-    #     plt.show()
-
-    #     time.sleep(5)
+        time.sleep(5)
