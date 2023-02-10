@@ -4,18 +4,8 @@ import scipy.signal as signal
 
 
 # Assign constants
-minHeartRate = 40
-maxHeartRate = 80
-
-# Get json string from data file
-jsonString = codecs.open("data/ecg1.json", 'r', encoding='utf-8').read()
-
-# Get json string from command line argument
-# jsonString = sys.argv[1]
-
-# Convert json string to np array
-jsonObj = json.loads(jsonString)
-jsonData = np.array(jsonObj)
+MIN_HEARTRATE = 40
+MAX_HEARTRATE = 80
 
 
 def filter(data, cutoff, fs, filterType, order=5):
@@ -69,8 +59,18 @@ def getHeartrate(data):
     return 60.0 * highestFreq
 
 def detectCA(heartrate):
-    return heartrate < minHeartRate or heartrate > maxHeartRate
+    return heartrate < MIN_HEARTRATE or heartrate > MAX_HEARTRATE
 
 if __name__ == "__main__":
+    # Get json string from data file
+    # jsonString = codecs.open("data/ecg1.json", 'r', encoding='utf-8').read()
+
+    # Get json string from command line argument
+    jsonString = sys.argv[1]
+
+    # Convert json string to np array
+    jsonObj = json.loads(jsonString)
+    jsonData = np.array(jsonObj)
+
     heartrate = getHeartrate(jsonData)
     print(detectCA(heartrate))
