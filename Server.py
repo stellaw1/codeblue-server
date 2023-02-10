@@ -1,6 +1,7 @@
 import numpy as np
 import json, sys, codecs
 import scipy.signal as signal
+from FCMUtils import FCMUtils
 
 
 # Assign constants
@@ -61,11 +62,19 @@ def getHeartrate(data):
 def detectCA(heartrate):
     return heartrate < MIN_HEARTRATE or heartrate > MAX_HEARTRATE
 
-if __name__ == "__main__":
-    # Get json string from data file
-    # jsonString = codecs.open("data/ecg1.json", 'r', encoding='utf-8').read()
+def sendCANotification():
+    messaging = FCMUtils()
 
-    # Get json string from command line argument
+    device_fcm__token = 'fHCSIiNfSP6YsZo51pvRvp:APA91bHJAj6kqTSOqiQmgr-Z2ropDCvpA3bbzURSXns24rUSu-FkeWrp25EmAInKa06owzZNZyUOl94u-3Oi0aAmAL5esZUpAi-kvyERjgg8J2VB43qrwLytz-LfdOIEJ4Znp7mscXJC'
+    title = "CARDIAC ARREST DETECTED! "
+    body = "911 will be alerted soon"
+
+    messaging.send_to_token(device_fcm__token, title, body)
+
+
+if __name__ == "__main__":
+    # Get json string from data file or from command line argument
+    # jsonString = codecs.open("data/ecg1.json", 'r', encoding='utf-8').read()
     jsonString = sys.argv[1]
 
     # Convert json string to np array
@@ -73,4 +82,6 @@ if __name__ == "__main__":
     jsonData = np.array(jsonObj)
 
     heartrate = getHeartrate(jsonData)
-    print(detectCA(heartrate))
+
+    if detectCA(heartrate):
+        sendCANotification()
