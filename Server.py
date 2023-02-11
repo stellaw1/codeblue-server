@@ -69,7 +69,7 @@ def sendCANotification():
     title = "CARDIAC ARREST DETECTED! "
     body = "911 will be alerted soon"
 
-    messaging.send_to_token(device_fcm__token, title, body)
+    messaging.send_to_token(device_fcm_token, title, body)
 
 
 if __name__ == "__main__":
@@ -83,5 +83,5 @@ if __name__ == "__main__":
 
     heartrate = getHeartrate(jsonData)
 
-    if detectCA(heartrate):
-        sendCANotification()
+    #if detectCA(heartrate):
+    sendCANotification()
