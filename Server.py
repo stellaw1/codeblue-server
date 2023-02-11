@@ -83,5 +83,5 @@ if __name__ == "__main__":
 
     heartrate = getHeartrate(jsonData)
 
-    if detectCA(heartrate):
-        sendCANotification()
+    #if detectCA(heartrate):
+    sendCANotification()
