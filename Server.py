@@ -9,29 +9,24 @@ MIN_HEARTRATE = 40
 MAX_HEARTRATE = 80
 
 
-def filter(data, cutoff, fs, filterType, order=5):
-    nyquist = 0.5 * fs
-    cutoff = cutoff / nyquist
-    b, a = signal.butter(order, cutoff, filterType)
-    filtered_signal = signal.filtfilt(b, a, data)
-
-    return filtered_signal
+def low_pass_filter(data, cutoff, fs, order=5):
+        nyquist = 0.5 * fs
+        cutoff = cutoff / nyquist
+        b, a = signal.butter(order, cutoff, 'lowpass')
+        filtered_signal = signal.filtfilt(b, a, data)
+        return filtered_signal
 
 def getHeartrate(data):
     """
     UNIFORM FOURIER TRANSFORM
-
     To be used on 10 second intervals to simulate incoming data
-    to appennd to the freqAverages for benchmarking
+    " to appennd to the freqAverages for benchmarking
     """
-    
+    # Low-pass filtering
     fs = 50  # Sample rate (Hz)
-    lowpass_cutoff = 3  # Cutoff frequency (Hz)
-    highpass_cutoff = 3  # Cutoff frequency (Hz)
+    cutoff = 3  # Cutoff frequency (Hz)
     order = 5  # Filter order
-
-    data = filter(data, lowpass_cutoff, fs, 'lowpass', order)
-    data = filter(data, highpass_cutoff, fs, 'highpass', order)
+    data = low_pass_filter(data, cutoff, fs, order)
     
     # Normalizing the data
     data = data - np.mean(data)
@@ -74,7 +69,7 @@ def sendCANotification():
 
 if __name__ == "__main__":
     # Get json string from data file or from command line argument
-    # jsonString = codecs.open("data/ecg1.json", 'r', encoding='utf-8').read()
+    # jsonString = codecs.open("data/healthyData.json", 'r', encoding='utf-8').read()
     jsonString = sys.argv[1]
 
     # Convert json string to np array
@@ -83,5 +78,5 @@ if __name__ == "__main__":
 
     heartrate = getHeartrate(jsonData)
 
-    #if detectCA(heartrate):
-    sendCANotification()
+    if detectCA(heartrate):
+        sendCANotification()
