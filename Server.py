@@ -65,11 +65,11 @@ def detectCA(heartrate):
 def sendCANotification():
     messaging = FCMUtils()
 
-    device_fcm__token = 'eNzWy1-8T561gmjED78yYe:APA91bGz5zt4wFLqTmZlKrQqt_8zCQ2fYjNz8lVOJdj9iCTTLYGkVbgwKnHAptIoQm7GjMgxxh6A9E1SXLAB5o0NmaA9uRNxOJZshx95ShSbgxV15gJUn2-pwTWacc_M-aa9tNG7NiKP'
+    device_fcm_token = 'eNzWy1-8T561gmjED78yYe:APA91bGz5zt4wFLqTmZlKrQqt_8zCQ2fYjNz8lVOJdj9iCTTLYGkVbgwKnHAptIoQm7GjMgxxh6A9E1SXLAB5o0NmaA9uRNxOJZshx95ShSbgxV15gJUn2-pwTWacc_M-aa9tNG7NiKP'
     title = "CARDIAC ARREST DETECTED! "
     body = "911 will be alerted soon"
 
-    messaging.send_to_token(device_fcm__token, title, body)
+    messaging.send_to_token(device_fcm_token, title, body)
 
 
 if __name__ == "__main__":
