@@ -10,3 +10,6 @@ pip install -r requirements.txt
 
 node index.js
 ```
+
+### Requirements
+- [ ] firebase private key `firebase-ppk.json` file
