@@ -5,7 +5,7 @@ const port = 3000
 
 app.use(express.json());
 app.get('/', (req, res) => {
-    var pythonData = [];
+    var pythonData;
     
     // spawn new child process to call the python script
     const python = spawn('python3', ['Server.py', JSON.stringify(req.body)]);
@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
     // collect data from script
     python.stdout.on('data', function (data) {
         // console.log('Pipe data from python script ...');
-        pythonData.push(data);
+        pythonData = data.toString().split("\n");
     });
 
     // in close event we are sure that stream is from child process is closed
