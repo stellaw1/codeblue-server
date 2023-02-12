@@ -9,10 +9,10 @@ MIN_HEARTRATE = 40
 MAX_HEARTRATE = 80
 
 
-def low_pass_filter(data, cutoff, fs, order=5):
+def filter(data, cutoff, fs, filterType, order=5):
         nyquist = 0.5 * fs
         cutoff = cutoff / nyquist
-        b, a = signal.butter(order, cutoff, 'lowpass')
+        b, a = signal.butter(order, cutoff, filterType)
         filtered_signal = signal.filtfilt(b, a, data)
         return filtered_signal
 
@@ -24,9 +24,11 @@ def getHeartrate(data):
     """
     # Low-pass filtering
     fs = 50  # Sample rate (Hz)
-    cutoff = 3  # Cutoff frequency (Hz)
+    lowpass_cutoff = 3  # Cutoff frequency (Hz)
+    highpass_cutoff = 0.25  # Cutoff frequency (Hz)
     order = 5  # Filter order
-    data = low_pass_filter(data, cutoff, fs, order)
+    data = filter(data, lowpass_cutoff, fs, 'lowpass', order)
+    data = filter(data, highpass_cutoff, fs, 'highpass', order)
     
     # Normalizing the data
     data = data - np.mean(data)
