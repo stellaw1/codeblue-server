@@ -4,10 +4,6 @@ const app = express()
 const port = 3000
 
 app.use(express.json());
-
-var cors = require('cors');
-app.use(cors());
-
 app.post('/', (req, res) => {
     var pythonData;
     
