@@ -6,7 +6,7 @@ from FCMUtils import FCMUtils
 
 # Assign constants
 MIN_HEARTRATE = 40
-MAX_HEARTRATE = 80
+MAX_HEARTRATE = 90
 
 
 def filter(data, cutoff, fs, filterType, order=5):
@@ -71,8 +71,8 @@ def sendCANotification():
 
 if __name__ == "__main__":
     # Get json string from data file or from command line argument
-    # jsonString = codecs.open("data/healthyData.json", 'r', encoding='utf-8').read()
-    jsonString = sys.argv[1]
+    jsonString = codecs.open(sys.argv[1], 'r', encoding='utf-8').read()
+    # jsonString = sys.argv[1]
 
     # Convert json string to np array
     jsonObj = json.loads(jsonString)
