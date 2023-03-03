@@ -6,7 +6,7 @@ from FCMUtils import FCMUtils
 
 # Assign constants
 MIN_HEARTRATE = 40
-MAX_HEARTRATE = 80
+MAX_HEARTRATE = 90
 
 
 def filter(data, cutoff, fs, filterType, order=5):
@@ -62,7 +62,7 @@ def detectCA(heartrate):
 def sendCANotification():
     messaging = FCMUtils()
 
-    device_fcm_token = 'eNzWy1-8T561gmjED78yYe:APA91bGz5zt4wFLqTmZlKrQqt_8zCQ2fYjNz8lVOJdj9iCTTLYGkVbgwKnHAptIoQm7GjMgxxh6A9E1SXLAB5o0NmaA9uRNxOJZshx95ShSbgxV15gJUn2-pwTWacc_M-aa9tNG7NiKP'
+    device_fcm_token = 'dWbbJ10FTOu1qsCHwcqctw:APA91bE5qLVb5ySQ4iIonoGtFP7CO9dnzfW260v8z5oCgLh7Wt7DBl10e58koDxLlYjsmIO6KBc3zpG7ZVaGn-EZlLfPbzMU4p0V5ObnJWWgXsXkVtAKha1COBHhBCerrDfW73aNvqBC'
     title = "CARDIAC ARREST DETECTED! "
     body = "911 will be alerted soon"
 
@@ -71,8 +71,8 @@ def sendCANotification():
 
 if __name__ == "__main__":
     # Get json string from data file or from command line argument
-    # jsonString = codecs.open("data/healthyData.json", 'r', encoding='utf-8').read()
-    jsonString = sys.argv[1]
+    jsonString = codecs.open(sys.argv[1], 'r', encoding='utf-8').read()
+    # jsonString = sys.argv[1]
 
     # Convert json string to np array
     jsonObj = json.loads(jsonString)
@@ -80,5 +80,8 @@ if __name__ == "__main__":
 
     heartrate = getHeartrate(jsonData)
 
-    if detectCA(heartrate):
+    ca = detectCA(heartrate)
+    print(ca)
+
+    if ca:
         sendCANotification()
