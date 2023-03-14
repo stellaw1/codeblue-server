@@ -27,11 +27,11 @@ app.post('/', (req, res) => {
     });
 })
 
-app.get('/healthy', (req, res) => {
+app.post('/healthy', (req, res) => {
     var pythonData;
     
     // spawn new child process to call the python script
-    const python = spawn('python3', ['Server.py', 'data/healthyData.json']);
+    const python = spawn('python3', ['Server.py', 'data/healthyData.json', req.body[0]]);
 
     // collect data from script
     python.stdout.on('data', function (data) {
@@ -50,11 +50,11 @@ app.get('/healthy', (req, res) => {
     });
 })
 
-app.get('/ca', (req, res) => {
+app.post('/ca', (req, res) => {
     var pythonData;
     
     // spawn new child process to call the python script
-    const python = spawn('python3', ['Server.py', 'data/CAData.json']);
+    const python = spawn('python3', ['Server.py', 'data/CAData.json', req.body[0]]);
 
     // collect data from script
     python.stdout.on('data', function (data) {

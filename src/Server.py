@@ -59,19 +59,19 @@ def getHeartrate(data):
 def detectCA(heartrate):
     return heartrate < MIN_HEARTRATE or heartrate > MAX_HEARTRATE
 
-def sendCANotification():
+def sendCANotification(device_id):
     messaging = FCMUtils()
 
-    device_fcm_token = 'dWbbJ10FTOu1qsCHwcqctw:APA91bE5qLVb5ySQ4iIonoGtFP7CO9dnzfW260v8z5oCgLh7Wt7DBl10e58koDxLlYjsmIO6KBc3zpG7ZVaGn-EZlLfPbzMU4p0V5ObnJWWgXsXkVtAKha1COBHhBCerrDfW73aNvqBC'
     title = "CARDIAC ARREST DETECTED! "
     body = "911 will be alerted soon"
 
-    messaging.send_to_token(device_fcm_token, title, body)
+    messaging.send_to_token(device_id, title, body)
 
 
 if __name__ == "__main__":
     # Get json string from data file or from command line argument
     jsonString = codecs.open(sys.argv[1], 'r', encoding='utf-8').read()
+    device_id = sys.argv[2]
     # jsonString = sys.argv[1]
 
     # Convert json string to np array
@@ -84,4 +84,4 @@ if __name__ == "__main__":
     print(ca)
 
     if ca:
-        sendCANotification()
+        sendCANotification(device_id)
