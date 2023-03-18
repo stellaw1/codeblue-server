@@ -69,9 +69,11 @@ def sendCANotification(device_id):
 
 
 if __name__ == "__main__":
+    print("test")
     # Get json string from data file or from command line argument
     jsonString = codecs.open(sys.argv[1], 'r', encoding='utf-8').read()
     device_id = sys.argv[2]
+    print(device_id)
     # jsonString = sys.argv[1]
 
     # Convert json string to np array
@@ -83,5 +85,5 @@ if __name__ == "__main__":
     ca = detectCA(heartrate)
     print(ca)
 
-    if ca:
-        sendCANotification(device_id)
+    # if ca:
+    #     sendCANotification(device_id)
