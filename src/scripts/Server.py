@@ -87,54 +87,38 @@ def getFileName(sensor, start, end):
     return name
 
 if __name__ == "__main__":
-    print("test")
     # Get json string from data file or from command line argument
-    jsonString = codecs.open(sys.argv[1], 'r', encoding='utf-8').read()
-    device_id = sys.argv[2]
+    reqBodyString = sys.argv[1]
+    print(reqBodyString)
+    reqBody = json.loads(reqBodyString)
+
+    sensors = reqBody['sensors']
+    device_id = reqBody['device_id']
     print(device_id)
-    # jsonString = sys.argv[1]
 
-    for i in range(0, 121, 10):
-        # Get file for this iteration
-        # Need to phase out for when the device passes cardiac data
-        print("-- Starting at t = " + str(i))
-        fileName = getFileName(sys.argv[1], i, i+10)
+    # Run analytics on all current time frames
+    counter = 0
+    finalHeartRate = 0
+    weightSum = 0
 
-        # Get json string from data file or from command line argument
-        jsonString = codecs.open(fileName, 'r', encoding='utf-8').read()
-        # jsonString = sys.argv[1]
+    for sensor in sensors:
+        # Acquire data for this sensor
+        data = sensor['data']
+        locationWeight = SENSORLOCATION_WEIGHTS[sensor['location']]
+        # Update the total weight
+        weightSum += locationWeight
+        # Estimate the heart rate from this sensor
+        estimatedHeartRate = getHeartrate(data)
+        # Add the heart rate to the weighted average
+        finalHeartRate += locationWeight * estimatedHeartRate
+        counter += 1
+        print("Estimated HR = " + str(estimatedHeartRate))
 
-        # Convert json string to dict
-        jsonObj = json.loads(jsonString)
+    finalHeartRate = finalHeartRate / weightSum
+    print("FinalHeartRate = " + str(finalHeartRate))
 
-        # Extract main objects
-        sensors = jsonObj['sensors']
-        pastFrames = np.array(jsonObj['pastFrames'])
-        #print("sensors: " + str(sensors))
-        #print("pastFrames: " + str(pastFrames))
+    ca = detectCA(finalHeartRate)
+    print(ca)
 
-        # Run analytics on all current time frames
-        counter = 0
-        finalHeartRate = 0
-        weightSum = 0
-        for sensor in sensors:
-            # Acquire data for this sensor
-            data = sensor['data']
-            locationWeight = sensorLocationWeights[sensor['location']]
-            # Update the total weight
-            weightSum += locationWeight
-            # Estimate the heart rate from this sensor
-            estimatedHeartRate = getHeartrate(data)
-            # Add the heart rate to the weighted average
-            finalHeartRate += locationWeight * estimatedHeartRate
-            counter += 1
-            print("Estimated HR = " + str(estimatedHeartRate))
-
-        finalHeartRate = finalHeartRate / weightSum
-        print("FinalHeartRate = " + str(finalHeartRate))
-
-        ca = detectCA(heartrate)
-        print(ca)
-
-        if ca:
-            sendCANotification()
+    if ca:
+        sendCANotification(device_id)
