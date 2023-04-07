@@ -3,8 +3,10 @@ import json, sys, codecs
 import scipy.signal as signal
 from FCMUtils import FCMUtils
 
+########################
+# Global constants
+########################
 
-# Assign constants
 MIN_HEARTRATE = 40
 MAX_HEARTRATE = 90
 
@@ -24,6 +26,9 @@ SENSORLOCATION_WEIGHTS = {
 }
 
 
+########################
+# Helper functions
+########################
 def filter(data, cutoff, fs, filterType, order=5):
     nyquist = 0.5 * fs
     cutoff = cutoff / nyquist
@@ -68,7 +73,6 @@ def getHeartrate(data):
                 highestVal = zipped[i][1]
 
     # return the strongest freq from the fourier transform
-    # print(60.0 * highestFreq)
     return 60.0 * highestFreq
 
 def detectCA(heartrate):
@@ -86,9 +90,11 @@ def getFileName(sensor, start, end):
     name = 'data/' + sensor + '/' + str(start) + 'to' + str(end) + '.json'
     return name
 
-if __name__ == "__main__":
-    res = {}
 
+########################
+# Main function 
+########################
+if __name__ == "__main__":
     # Get json string from data file or from command line argument
     reqBodyString = sys.argv[1]
     # print(reqBodyString)
@@ -114,17 +120,17 @@ if __name__ == "__main__":
         # Add the heart rate to the weighted average
         finalHeartRate += locationWeight * estimatedHeartRate
         counter += 1
-        # print("Estimated HR = " + str(estimatedHeartRate))
 
     finalHeartRate = finalHeartRate / weightSum
-    # print("FinalHeartRate = " + str(finalHeartRate))
-    res["heartRate"] = finalHeartRate
 
     ca = detectCA(finalHeartRate)
-    res["ca"] = ca
-    # print(ca)
 
     if ca:
         sendCANotification(device_id)
+
+    res = {
+        "ca": ca,
+        "heartrate": finalHeartRate, 
+    }
 
     print(res, end = '')
