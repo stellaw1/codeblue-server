@@ -102,29 +102,32 @@ function handle_req(req, res) {
 function handle_heartrate(req, res) {
     var pythonData;
 
-    // spawn new child process to call the python script
     const python = spawn('python3', [
-        './src/scripts/Server.py',
-        './src/data/healthyData.json',
-        req.body[0]
+        './src/scripts/DemoServer.py',
+        JSON.stringify(req.body)
     ]);
 
     // collect data from script
+    python.stdout.setEncoding('utf8');
     python.stdout.on('data', function (data) {
         // console.log('Pipe data from python script ...');
-        console.log(data);
-        pythonData = data.toString().split('\n');
+        // console.log(data)
+        pythonData = data.toString();
+    });
+
+    // check for error outputs
+    python.stderr.setEncoding('utf8');
+    python.stderr.on('data', function (data) {
+        console.log('ERROR: ' + data);
+
+        pythonData = data.toString();
     });
 
     // in close event we are sure that stream is from child process is closed
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);
-        console.log(pythonData);
         // send data to browser
-        res.send({
-            heartRate: pythonData[0],
-            ca: pythonData[1]
-        });
+        res.send(JSON.stringify(pythonData));
     });
 }
 
