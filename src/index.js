@@ -7,4 +7,8 @@ const port = 3000;
 app.use(express.json());
 app.use('/', router);
 
-app.listen(port, () => console.log(`CodeBlue server listening on port ${port}!`));
+app.listen(port, () =>
+    console.log(`CodeBlue server listening on port ${port}!`)
+);
+
+export default app;

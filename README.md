@@ -21,7 +21,7 @@ node index.js # start node server
 - [ ] replace `device_fcm_token` in `Server.py` with the token in simulator terminal output 
 
 
-### Message format
+### Request message format
 ```json
 {
   "sensors": [
@@ -44,3 +44,11 @@ Where:
 - 'location' represents the corresponding confidence levels associated with each sensor location
 - 'pastFrames' represents the estimated heart rate of previous 10 second frames.
     - 'pastFrames' can be empty, and hold up to a maximum of 3 values.
+
+### Response message format
+```json
+{
+  "heartRate": "60",
+  "ca": "True"
+} 
+```

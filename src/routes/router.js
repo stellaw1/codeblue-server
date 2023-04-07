@@ -1,13 +1,12 @@
 import { Router } from 'express';
-import { handle_dummy, handle_req, handle_healthy, handle_ca } from './default.js';
+import { handle_req, handle_heartrate, handle_detect } from './default.js';
 
 const router = Router();
 
-router.get('/', handle_dummy);
 router.post('/', handle_req);
 
-router.post('/healthy', handle_healthy);
+router.post('/heartrate', handle_heartrate);
 
-router.post('/ca', handle_ca);
+router.post('/detect', handle_detect);
 
 export default router;

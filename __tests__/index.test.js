@@ -1,16 +1,12 @@
 import request from 'supertest';
-import express from 'express';
-import router from '../src/routes/router.js';
-
-const app = new express();
-app.use('/', router);
+import app from '../src/index.js';
+import * as data from './data/data.js';
 
 describe('Server Tests', function () {
     test('responds to /', async () => {
-        const res = await request(app).post('/');
+        const res = await request(app).post('/').send(JSON.stringify(data.valid_body));
         expect(res.header['content-type']).toBe('text/html; charset=utf-8');
         expect(res.statusCode).toBe(200);
-        expect(res.text).toEqual('hello world!');
     });
 
     // test('responds to /healthy', async () => {

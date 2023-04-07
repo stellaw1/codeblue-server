@@ -68,7 +68,7 @@ def getHeartrate(data):
                 highestVal = zipped[i][1]
 
     # return the strongest freq from the fourier transform
-    print(60.0 * highestFreq)
+    # print(60.0 * highestFreq)
     return 60.0 * highestFreq
 
 def detectCA(heartrate):
@@ -87,14 +87,16 @@ def getFileName(sensor, start, end):
     return name
 
 if __name__ == "__main__":
+    res = {}
+
     # Get json string from data file or from command line argument
     reqBodyString = sys.argv[1]
-    print(reqBodyString)
+    # print(reqBodyString)
     reqBody = json.loads(reqBodyString)
 
     sensors = reqBody['sensors']
     device_id = reqBody['device_id']
-    print(device_id)
+    # print(device_id)
 
     # Run analytics on all current time frames
     counter = 0
@@ -112,13 +114,17 @@ if __name__ == "__main__":
         # Add the heart rate to the weighted average
         finalHeartRate += locationWeight * estimatedHeartRate
         counter += 1
-        print("Estimated HR = " + str(estimatedHeartRate))
+        # print("Estimated HR = " + str(estimatedHeartRate))
 
     finalHeartRate = finalHeartRate / weightSum
-    print("FinalHeartRate = " + str(finalHeartRate))
+    # print("FinalHeartRate = " + str(finalHeartRate))
+    res["heartRate"] = finalHeartRate
 
     ca = detectCA(finalHeartRate)
-    print(ca)
+    res["ca"] = ca
+    # print(ca)
 
     if ca:
         sendCANotification(device_id)
+
+    print(res, end = '')
