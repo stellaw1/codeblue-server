@@ -33,6 +33,10 @@ def notify(heartrate, device_id):
 
     return ca
 
+def getWeightedHeartrate(heartrates):
+    n = len(heartrates)
+    return sum(heartrates) / n
+
 
 ########################
 # Main function 
@@ -46,7 +50,8 @@ if __name__ == "__main__":
     # print(reqBodyString)
     reqBody = json.loads(reqBodyString)
 
-    heartrate = reqBody['heartrate']
+    heartrates = reqBody['heartrates']
+    heartrate = getWeightedHeartrate(heartrates);
     device_id = reqBody['device_id']
 
     ca = notify(heartrate, device_id)
