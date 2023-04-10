@@ -51,8 +51,6 @@ if __name__ == "__main__":
     reqBody = json.loads(reqBodyString)
 
     heartrates = reqBody['heartrates']
-    print(heartrates)
-
     heartrate = getWeightedHeartrate(heartrates);
     device_id = reqBody['device_id']
 
