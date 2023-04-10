@@ -13,7 +13,7 @@ npm i # install express library
 
 pip install -r requirements.txt # install python dependencies
 
-node index.js # start node server
+npm start # start node server
 ```
 
 ### Requirements
