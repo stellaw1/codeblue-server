@@ -18,7 +18,6 @@ npm start # start node server
 
 ### Requirements
 - [ ] firebase private key `firebase-ppk.json` file
-- [ ] replace `device_fcm_token` in `Server.py` with the token in simulator terminal output 
 
 
 ### Request message format
