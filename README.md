@@ -1,9 +1,12 @@
 # Codeblue Server
-
 Node server code for running detection algorithm Python scripts on EC2 server
 
-### Running the server
-On EC2: 
+
+## Setup
+1. Create a new Firebase project using the [Firebase console](https://console.firebase.google.com/)
+2. Get the firebase private key file and place it under the root directory `/firebase-ppk.json`
+
+## Running the server
 ```bash
 python3 -m venv ./env # create Python virtual environment
 
@@ -16,10 +19,9 @@ pip install -r requirements.txt # install python dependencies
 npm start # start node server
 ```
 
-### Requirements
-- [ ] firebase private key `firebase-ppk.json` file
+**NOTE:** Consider using [PM2](https://pm2.keymetrics.io/docs/usage/quick-start/) to allow server to always be running. 
 
-
+## Message formats
 ### Request message format
 ```json
 {
